@@ -1,42 +1,39 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './StudentDashboard.css';
+import './OldQuizDashboard.css';
 import LogoutButton from './LogoutButton';
 
-function StudentDashboard() {
+function OldQuizDashboard() {
     const studentName = localStorage.getItem('username') || 'Student';
     const schoolLogo = localStorage.getItem('schoolLogoUrl');
     const studentId = localStorage.getItem('userId');
-    const [availableQuizzes, setAvailableQuizzes] = useState([]);
+    const [quizHistory, setQuizHistory] = useState([]);
     const navigate = useNavigate();
 
     useEffect(() => {
-        const fetchQuizzes = async () => {
+        const fetchQuizHistory = async () => {
             try {
-                const response = await fetch(`https://clarytix-backend.onrender.com/student/quizzes?studentId=${studentId}`);
+                const response = await fetch(`https://clarytix-backend.onrender.com/student/quiz-history?studentId=${studentId}`);
                 const data = await response.json();
-                if (data.success && Array.isArray(data.availableQuizzes)) {
-                    setAvailableQuizzes(data.availableQuizzes);
+                if (data.success && Array.isArray(data.quizHistory)) {
+                    setQuizHistory(data.quizHistory);
                 } else {
-                    setAvailableQuizzes([]);
-                    console.warn('No available quizzes found');
+                    setQuizHistory([]);
+                    console.warn('No quiz history found');
                 }
             } catch (error) {
-                console.error('Error fetching quizzes:', error);
-                setAvailableQuizzes([]);
+                console.error('Error fetching quiz history:', error);
+                setQuizHistory([]);
             }
         };
-        fetchQuizzes();
+        fetchQuizHistory();
     }, [studentId]);
 
     return (
         <div className="dashboard">
             <header>
                 <img src={schoolLogo} alt="School Logo" className="school-logo" />
-                <h1>Available Quizzes</h1>
-                <button onClick={() => navigate('/old-quizzes')} className="secondary-button">
-                    Access Old Quizzes
-                </button>
+                <h1>Quiz History</h1>
                 <LogoutButton />
             </header>
 
@@ -50,16 +47,16 @@ function StudentDashboard() {
                     </tr>
                 </thead>
                 <tbody>
-                    {availableQuizzes.length === 0 ? (
-                        <tr><td colSpan="4">No quizzes available.</td></tr>
+                    {quizHistory.length === 0 ? (
+                        <tr><td colSpan="4">No quizzes attempted yet.</td></tr>
                     ) : (
-                        availableQuizzes.map((quiz, index) => (
+                        quizHistory.map((quiz, index) => (
                             <tr key={index}>
                                 <td>{quiz.class}</td>
                                 <td>{quiz.subject}</td>
                                 <td>{quiz.topic}</td>
                                 <td>
-                                    <button onClick={() => navigate(`/quiz?topicId=${quiz.topic_id}`)}>Start Quiz</button>
+                                    <button onClick={() => navigate(`/quiz?topicId=${quiz.topic_id}`)}>Retake Quiz</button>
                                 </td>
                             </tr>
                         ))
@@ -70,4 +67,4 @@ function StudentDashboard() {
     );
 }
 
-export default StudentDashboard;
+export default OldQuizDashboard;

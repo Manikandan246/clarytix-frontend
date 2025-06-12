@@ -2,22 +2,25 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, useParams } from 'react-router-dom';
 import LoginPage from './components/LoginPage';
 import StudentDashboard from './components/StudentDashboard';
+import OldQuizDashboard from './components/OldQuizDashboard'; // ✅ New import
 import TeacherDashboard from './components/TeacherDashboard';
 import AdminDashboard from './components/AdminDashboard';
 import QuizContainer from './components/QuizContainer'; 
-import AdminPerformancePage from './components/AdminPerformancePage';// <- update here
+import AdminPerformancePage from './components/AdminPerformancePage';
 
 // Wrapper to extract topicId from URL params
 function WrappedQuizContainer() {
   const { topicId } = useParams();
   return <QuizContainer topicId={topicId} />;
 }
+
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<LoginPage />} />
         <Route path="/student-dashboard" element={<StudentDashboard />} />
+        <Route path="/old-quizzes" element={<OldQuizDashboard />} /> {/* ✅ New route */}
         <Route path="/teacher-dashboard" element={<TeacherDashboard />} />
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
         <Route path="/quiz/:topicId" element={<WrappedQuizContainer />} />
